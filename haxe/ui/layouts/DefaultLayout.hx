@@ -108,6 +108,15 @@ class DefaultLayout extends Layout {
                         cx = Math.fceil(cx);
                     }
                 }
+
+                // a % child held at its min width counts as fixed, so the % children after it share what is left.
+                // Only on the axis the children are laid out along (_calcFullWidths), where usableSize also leaves
+                // the held child out; on the other axis every child is a % of the full size. Take off the share the
+                // child was given (fullWidthValue for 100%), otherwise e.g. two 100% children leave a total of 0
+                // and the next child is sized to NaN / Infinity
+                if (_calcFullWidths == true && fixedMinWidth(child)) {
+                    percentWidth -= childPercentWidth;
+                }
                 
                 /*
                 #if debug
@@ -123,6 +132,11 @@ class DefaultLayout extends Layout {
                     childPercentHeight = fullHeightValue;
                 }
                 cy = (usableSize.height * childPercentHeight) / percentHeight - marginTop(child) - marginBottom(child);
+
+                // same as for the width above
+                if (_calcFullHeights == true && fixedMinHeight(child)) {
+                    percentHeight -= childPercentHeight;
+                }
                 
                 /*
                 #if debug
@@ -131,13 +145,6 @@ class DefaultLayout extends Layout {
                 }
                 #end
                 */
-            }
-
-            if (fixedMinWidth(child) && child.percentWidth != null) {
-                percentWidth -= child.percentWidth;
-            }
-            if (fixedMinHeight(child) && child.percentHeight != null) {
-                percentHeight -= child.percentHeight;
             }
 
             child.resizeComponent(cx, cy);
