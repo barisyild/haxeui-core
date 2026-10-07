@@ -922,7 +922,7 @@ class Style {
                 var arr:Array<Any> = [];
                 for (v in vl) {
                     switch (v) {
-                        case Value.VDimension(PERCENT(p)):
+                        case Value.VDimension(Dimension.PERCENT(p)):
                             arr.push(p + "%"); // keep the unit, what 100% means is up to each filter
                         case _:
                             var a = ValueTools.any(v);
