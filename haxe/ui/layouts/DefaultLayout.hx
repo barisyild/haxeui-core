@@ -99,7 +99,10 @@ class DefaultLayout extends Layout {
                 if (childPercentWidth == 100) {
                     childPercentWidth = fullWidthValue;
                 }
-                cx = (usableSize.width * childPercentWidth) / percentWidth - marginLeft(child) - marginRight(child);
+                // held children (see below) can use up the whole total, e.g. a held 100% child next to a 50% one; then
+                // there is nothing left to share, and dividing by 0 would give NaN / Infinity
+                var shareWidth:Float = percentWidth > 0 ? (usableSize.width * childPercentWidth) / percentWidth : 0;
+                cx = shareWidth - marginLeft(child) - marginRight(child);
                 if (childRoundingWidth != null && childRoundingWidth.exists(child)) {
                     var roundDirection = childRoundingWidth.get(child);
                     if (roundDirection == 0) {
@@ -131,7 +134,8 @@ class DefaultLayout extends Layout {
                 if (childPercentHeight == 100) {
                     childPercentHeight = fullHeightValue;
                 }
-                cy = (usableSize.height * childPercentHeight) / percentHeight - marginTop(child) - marginBottom(child);
+                var shareHeight:Float = percentHeight > 0 ? (usableSize.height * childPercentHeight) / percentHeight : 0;
+                cy = shareHeight - marginTop(child) - marginBottom(child);
 
                 // same as for the width above
                 if (_calcFullHeights == true && fixedMinHeight(child)) {
