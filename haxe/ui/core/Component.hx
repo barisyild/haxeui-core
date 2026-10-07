@@ -1976,13 +1976,14 @@ class Component extends ComponentImpl
     }
 
     public override function resizeComponent(w:Null<Float>, h:Null<Float>) {
-        // layouts re-apply % sizes on every pass, so clamp here too: if only enforceSizeConstraints
+        // layouts re-apply % sizes on every pass, so clamp those here too: if only enforceSizeConstraints
         // clamped them, the parent would keep putting the unclamped size back and the two would
-        // invalidate each other forever
-        if (w != null) {
+        // invalidate each other forever. Other sizes are still clamped by enforceSizeConstraints only,
+        // against the style that is current when the component validates
+        if (w != null && _percentWidth != null) {
             w = constrainWidth(w);
         }
-        if (h != null) {
+        if (h != null && _percentHeight != null) {
             h = constrainHeight(h);
         }
         super.resizeComponent(w, h);
